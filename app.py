@@ -1,96 +1,55 @@
 import streamlit as st
 import requests
+import os
 from streamlit_lottie import st_lottie
 
-# ---------------------- Page Config ----------------------
-st.set_page_config(page_title="My Webpage", page_icon=":tada:", layout="wide")
+# ---------------- Page Config ----------------
+st.set_page_config(
+    page_title="My Portfolio",
+    page_icon="🎉",
+    layout="wide"
+)
 
-# ---------------------- Function to load Lottie ----------------------
+# ---------------- Lottie Loader ----------------
 def load_lottieurl(url):
     r = requests.get(url)
     if r.status_code != 200:
         return None
     return r.json()
 
-st.sidebar.title("Theme Settings")
-theme = st.sidebar.radio(
-    "Select Theme",
-    ["Light White", "Full White", "Black"]
+# ---------------- Lottie Animation ----------------
+lottie_animation = load_lottieurl(
+    "https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json"
 )
-if theme == "Light White":
-    st.markdown("""
-    <style>
-    .stApp {
-        background-color: #f4f6f8;
-        color: #1f2937;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
-elif theme == "Full White":
-    st.markdown("""
-    <style>
-    .stApp {
-        background-color: #ffffff;
-        color: #000000;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-else:
-    st.markdown("""
-    <style>
-    .stApp {
-        background-color: #0e1117;
-        color: #ffffff;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-
-# Load Lottie animation
-lottie_animation = load_lottieurl('https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json')
-
-# ---------------------- Header Section ----------------------
-st.subheader("Hi! I am Abdul Nafay :wave:")
+# ---------------- Header ----------------
+st.subheader("My Personal Portfolio 👋")
 st.title("Welcome to My Personal Portfolio")
 st.write("This is a place where I share my projects and work.")
-st.write("[Learn More >](https://www.linkedin.com/in/abdul-nafay-98299b382)")
+st.write("[Learn More >](https://www.linkedin.com)")
 
-# ---------------------- What I Do Section ----------------------
-with st.container():
-    st.write("---")
-    left_column, right_column = st.columns(2)
-    
-    with left_column:
-        st.header("What I Do")
-        st.write("##")
-        st.write(
-            """
-            - Project Development
-            - Web / App Design
-            - Automation Tools
-            - Creative Solutions
-            - Other Personal Projects
-            """
-        )
-        st.write("[Learn More >](https://www.linkedin.com/in/abdul-nafay-98299b382)")
-    
-    with right_column:
-        if lottie_animation:
-            st_lottie(lottie_animation, height=300, key="animation")
+# ---------------- What I Do ----------------
+st.write("---")
+left_column, right_column = st.columns(2)
 
-# ---------------------- Projects Section ----------------------
-with st.container():
-    st.write('---')
-    st.header('My Projects')
-    st.write('##')
+with left_column:
+    st.header("What I Do")
+    st.write("""
+    - Project Development  
+    - Web / App Design  
+    - Automation Tools  
+    - Creative Solutions  
+    """)
 
-    # List of projects
-    projects = [
+with right_column:
+    if lottie_animation:
+        st_lottie(lottie_animation, height=300, key="animation")
+
+# ---------------- Projects ----------------
+st.write("---")
+st.header("My Projects")
+
+projects = [
         {
             "image": "project1.png",
             "title": "Currency Exchange App",
@@ -123,52 +82,81 @@ with st.container():
         },
     ]
 
-    # Display each project
-    for proj in projects:
-        image_column, text_column = st.columns((1, 2))
-        with image_column:
-            st.image(proj["image"], width=300)  # Updated: use width instead of use_column_width
-        with text_column:
-            st.subheader(proj["title"])
-            st.write(proj["description"])
-            st.markdown(f'[Watch Video]({proj["link"]})')  # Changed text here
-        st.write('---')
 
-# ---------------------- Additional Section Placeholder ----------------------
-with st.container():
-    st.header("Contact Info")
-    st.write("phone number: +92 3363016943")
-    st.write("email: ucristano37@gamail.com")
+for i, proj in enumerate(projects):
+    with cols[i]:
+        if os.path.exists(proj["image"]):
+            st.image(proj["image"], width=180)
+        else:
+            st.warning("Image missing")
+        st.subheader(proj["title"])
+        st.write(proj["description"])
+        st.markdown(f"[View Project]({proj['link']})")
 
-with st.container():
-    st.header("My social media accounts")
-    st.write("LinkedIn: https // linkedin.com/in/abdul-nafay-98299b382")
-    st.write("Github: github.com/AbdulNafay37")
+# ---------------- Contact Info ----------------
+st.write("---")
+st.header("Contact Info")
+st.write("📞 +92 336 3016943")
+st.write("📧 ucristano37@gmail.com")
 
-with st.container():
-    st.write("-------")
-    st.header("Get In Touch With Me!")
-    st.write("##")
+# ---------------- CONTACT FORM CSS (SAFE) ----------------
+st.markdown("""
+<style>
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
 
-    contact_form = """
+input, textarea {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
 
-<form class="contact-form"
-action="https://formsubmit.co/ucristano37@gmail.com"
-method="POST">
+textarea {
+    min-height: 120px;
+}
 
-<input type="hidden" name="_captcha" value="false">
-<input type="text" name="name" placeholder="Your name" required>
-<input type="email" name="email" placeholder="Your email" required>
+button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-<textarea name="message" placeholder="Your message here" required></textarea>
+button:hover {
+    background-color: #1e40af;
+}
+</style>
+""", unsafe_allow_html=True)
 
-<button type="submit">Send</button>
+# ---------------- Contact Form ----------------
+st.write("---")
+st.header("Get In Touch With Me!")
+
+contact_form = """
+<form action="https://formsubmit.co/ucristano37@gmail.com" method="POST">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_template" value="table">
+
+  <input type="text" name="name" placeholder="Your Name" required>
+  <input type="email" name="email" placeholder="Your Email" required>
+  <textarea name="message" placeholder="Your Message" required></textarea>
+
+  <button type="submit">Send Message 🚀</button>
 </form>
-
 """
-    
-left_column, right_column = st.columns(2)
-with left_column:
-        st.markdown(contact_form, unsafe_allow_html=True)
-with right_column:
-        st.empty()    
+
+left, right = st.columns(2)
+
+with left:
+    st.markdown(contact_form, unsafe_allow_html=True)
+
+else:
+    st.print("YOUR MESSAGE HAS BEEN DELIVERED.")
