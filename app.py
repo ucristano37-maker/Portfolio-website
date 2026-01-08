@@ -3,19 +3,25 @@ import streamlit as st
 import requests
 from streamlit_lottie import st_lottie
 
-# ---------------- Page Config ----------------
+# ---------------- Page Config (MUST BE FIRST) ----------------
 st.set_page_config(
     page_title="My Webpage",
     page_icon="🎉",
     layout="wide"
 )
 
-# ---------------- Function: Load Lottie (Safe) ----------------
+st.write("APP STARTED")
+
+# ---------------- Function: Load Lottie ----------------
 def load_lottieurl(url):
-    r = requests.get(url)
-    if r.status_code != 200:
+    try:
+        r = requests.get(url, timeout=10)
+        if r.status_code != 200:
+            return None
+        return r.json()
+    except:
         return None
-    return r.json()
+
 # ---------------- Sidebar Theme ----------------
 st.sidebar.title("Theme Settings")
 theme = st.sidebar.radio("Select Theme", ["Light White", "Full White", "Black"])
@@ -39,10 +45,10 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- CSS ----------------
-
-# ---------------- Lottie (WORKING URL) ----------------
-lottie_animation = load_lottieurl('https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json')
+# ---------------- Lottie ----------------
+lottie_animation = load_lottieurl(
+    "https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json"
+)
 
 # ---------------- Header ----------------
 st.subheader("My Personal portfolio 👋")
@@ -56,17 +62,16 @@ left_column, right_column = st.columns(2)
 
 with left_column:
     st.header("What I Do")
-    st.write("""
+    st.markdown("""
     - Project Development  
     - Web / App Design  
     - Automation Tools  
     - Creative Solutions  
     """)
 
-    with right_column:
-        if lottie_animation:
-            st_lottie(lottie_animation, height=300, key="animation")
-
+with right_column:
+    if lottie_animation:
+        st_lottie(lottie_animation, height=300)
 
 # ---------------- Projects ----------------
 st.write("---")
@@ -105,6 +110,7 @@ projects = [
         },
     ]
 
+
 for proj in projects:
     img_col, txt_col = st.columns((1, 2))
 
@@ -112,7 +118,7 @@ for proj in projects:
         if os.path.exists(proj["image"]):
             st.image(proj["image"], width=280)
         else:
-            st.warning(f"Missing image: {proj['image']}")
+            st.info(f"Image not found: {proj['image']}")
 
     with txt_col:
         st.subheader(proj["title"])
@@ -121,14 +127,12 @@ for proj in projects:
 
     st.write("---")
 
-
-
 # ---------------- Contact Info ----------------
 st.header("Contact Info")
 st.write("📞 +92 336 3016943")
 st.write("📧 ucristano37@gmail.com")
 
-# ---------------- Contact Form (FAST & SAFE) ----------------
+# ---------------- Contact Form ----------------
 st.write("---")
 st.header("Get In Touch With Me!")
 
@@ -136,12 +140,10 @@ contact_form = """
 <form action="https://formsubmit.co/ucristano37@gmail.com" method="POST">
   <input type="hidden" name="_captcha" value="false">
   <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_next" value="https://thankyou-page.vercel.app">
-
+  <input type="hidden" name="_next" value="?submitted=true">
   <input type="text" name="name" placeholder="Your Name" required>
   <input type="email" name="email" placeholder="Your Email" required>
   <textarea name="message" placeholder="Your Message" required></textarea>
-
   <button type="submit">Send Message 🚀</button>
 </form>
 """
@@ -149,5 +151,7 @@ contact_form = """
 left, right = st.columns(2)
 with left:
     st.markdown(contact_form, unsafe_allow_html=True)
-with right:
-    st.info("Your message will be delivered safely & quickly ✅")
+
+if "submitted" in st.query_params:
+    with right:
+        st.success("✅ Your message has been delivered!")
