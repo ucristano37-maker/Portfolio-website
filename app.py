@@ -1,7 +1,7 @@
 import os
 import streamlit as st
-import requests
 from streamlit_lottie import st_lottie
+import requests
 
 # ---------------- Page Config (MUST BE FIRST) ----------------
 st.set_page_config(
