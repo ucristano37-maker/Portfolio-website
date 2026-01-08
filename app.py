@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 import requests
-from streamlit_lottie import st_lottie
+
 # ---------------- Page Config (MUST BE FIRST) ----------------
 st.set_page_config(
     page_title="My Webpage",
@@ -68,9 +68,7 @@ with left_column:
     - Creative Solutions  
     """)
 
-with right_column:
-    if lottie_animation:
-        st_lottie(lottie_animation, height=300)
+
 
 # ---------------- Projects ----------------
 st.write("---")
